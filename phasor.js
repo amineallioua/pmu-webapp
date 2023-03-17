@@ -366,3 +366,8 @@ var stopButton = document.getElementById("stopButton");
 
 startButton.addEventListener("click", startChart);
 stopButton.addEventListener("click", stopChart);
+
+
+ function refresh(){
+        window.location.reload("Refresh")
+      }
