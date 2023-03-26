@@ -48,12 +48,12 @@ ctx2.stroke();
 
 
     function draw1() { //function for length angle values
-      let length1 =  Math.floor(Math.random() * 149);
-      let angle1 = Math.floor(Math.random() * 359) * Math.PI/180;
-      let length2 =   Math.floor(Math.random() * 149);
-      let angle2 =  Math.floor(Math.random() * 359) * Math.PI/180;
-      let length3 =   Math.floor(Math.random() * 149);
-      let angle3 = Math.floor(Math.random() * 359)  * Math.PI/180;
+      let length1 = 1 + Math.floor(Math.random() * 100)/1000;
+      let angle1 = 0 + (Math.floor(Math.random() * 100 )/10000)  ;
+      let length2 =   1 + Math.floor(Math.random() * 100)/1000;
+      let angle2 =  2*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000 )  ;
+      let length3 =  1 + Math.floor(Math.random() * 100)/1000;
+      let angle3 =  4*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000)  ;
     
     
       let canvas = document.getElementById("phasorCanvas");
@@ -151,7 +151,7 @@ ctx2.stroke();
       
 
       });
-      
+      return  length1 ,length2 ,length3 , angle1,angle2,angle3
     }
     
     
@@ -160,7 +160,7 @@ ctx2.stroke();
     
     
     function draw2() { //function for length angle values
-      let length1 = 1 + Math.floor(Math.random() * 100)/1000;
+      let length1  = 1 + Math.floor(Math.random() * 100)/1000;
       let angle1 = 0 + (Math.floor(Math.random() * 100 )/10000)  ;
       let length2 =   1 + Math.floor(Math.random() * 100)/1000;
       let angle2 =  2*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000 )  ;
@@ -252,20 +252,6 @@ ctx2.stroke();
       });
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
-
-
-
 
 
 
@@ -279,17 +265,13 @@ function loop() {
     // code for the loop goes here
 
 
-    
-    
-
-
  draw1();
    draw2();
     // repeat the loop after a delay
     setTimeout(loop, 100);
   } else {
     // the loop is paused
-    console.log("Loop paused");
+    
   }
 }
 
@@ -314,55 +296,79 @@ document.getElementById("pauseButton").addEventListener("click", function() {
 
 
 
-  //Typical Scatter Chart Syntax:
-// Initialize chart
 var ctx5 = document.getElementById("myChart").getContext("2d");
 var myChart = new Chart(ctx5, {
   type: "line",
   data: {
     labels: [],
-    datasets: [{
-      label: "My Dataset",
-      data: [],
-      borderColor: "red",
-      fill: false
-    }]
+    datasets: [
+      {
+        label: "Dataset 1",
+        data: [10, 20, 30, 40, 50, 60],
+        borderColor: "red",
+        fill: false,
+      },
+      {
+        label: "Dataset 2",
+        data: [20, 30, 40, 50, 60, 70],
+        borderColor: "blue",
+        fill: false,
+      },
+      {
+        label: "Dataset 3",
+        data: [30, 40, 50, 60, 70, 80],
+        borderColor: "green",
+        fill: false,
+      },
+    ],
   },
-  options: {}
+  options: {},
 });
 
-// Function to generate new data
-function generateData() {
-  return Math.floor(Math.random() * 100);
-}
-
 // Update chart every second
-var intervalId;
+let intervalId; // keep track of the interval ID to stop it later
+
 function startChart() {
-  intervalId = setInterval(function() {
+  // check if the chart is already running
+  if (intervalId) {
+    return;
+  }
+
+  intervalId = setInterval(function () {
     // Add new data point
     var time = new Date().toLocaleTimeString();
     myChart.data.labels.push(time);
-    myChart.data.datasets[0].data.push(generateData());
-
+    
     // Remove oldest data point if chart has more than 50 data points
     if (myChart.data.labels.length > 50) {
       myChart.data.labels.shift();
       myChart.data.datasets[0].data.shift();
+      myChart.data.datasets[1].data.shift();
+      myChart.data.datasets[2].data.shift();
     }
 
     // Update chart
     myChart.update();
-  }, 100);
+  }, 1000);
 }
 
 function stopChart() {
   clearInterval(intervalId);
+  intervalId = null; // reset the interval ID
 }
 
-// Add event listeners to buttons
-var startButton = document.getElementById("startButton");
-var stopButton = document.getElementById("stopButton");
 
-startButton.addEventListener("click", startChart);
-stopButton.addEventListener("click", stopChart);
+
+
+// Get references to the start and stop buttons
+const startButton = document.getElementById('startButton');
+const stopButton = document.getElementById('stopButton');
+
+// Add event listeners to the buttons
+startButton.addEventListener('click', startChart);
+stopButton.addEventListener('click', stopChart);
+
+
+function refresh(){
+  window.location.reload("Refresh")
+}
