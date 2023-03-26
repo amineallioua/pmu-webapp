@@ -1,3 +1,4 @@
+
 //darw circle and axes for phase 1
 let canvas = document.getElementById("phasorCanvas");
 let ctx = canvas.getContext("2d");
@@ -36,15 +37,82 @@ ctx2.arc(canvas1.width/2, canvas1.height/2, 154, 0, 2 * Math.PI);
 ctx.lineWidth = 3;
 ctx2.stroke();
 
-function draw1() { //function for length angle values
+let max_length_queue = 50; // max length of queue
+let phasors_diagram_refresh_rate = 100; // refresh rate of phasors diagram (ms)
 
-  let length1 = 1 + Math.floor(Math.random() * 100)/1000;
-  let angle1 = 0 + (Math.floor(Math.random() * 100 )/10000)  ;
-  let length2 =   1 + Math.floor(Math.random() * 100)/1000;
-  let angle2 =  2*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000 )  ;
-  let length3 =  1 + Math.floor(Math.random() * 100)/1000;
-  let angle3 =  4*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000)  ;
+// global queue variables
+let mag_v1_queue   =  new Queue(max_length_queue);
+let angle_v1_queue =  new Queue(max_length_queue);
+let mag_v2_queue   =  new Queue(max_length_queue);
+let angle_v2_queue =  new Queue(max_length_queue);
+let mag_v3_queue   =  new Queue(max_length_queue);
+let angle_v3_queue =  new Queue(max_length_queue);
+let mag_i1_queue   =  new Queue(max_length_queue);
+let angle_i1_queue =  new Queue(max_length_queue);
+let mag_i2_queue   =  new Queue(max_length_queue);
+let angle_i2_queue =  new Queue(max_length_queue);
+let mag_i3_queue   =  new Queue(max_length_queue);
+let angle_i3_queue =  new Queue(max_length_queue);
+let freq_queue     =  new Queue(max_length_queue);
+let rocof_queue    =  new Queue(max_length_queue);
 
+
+function generate_random_values() {
+    // voltage phasors
+    let mag_v1 = 1 + Math.floor(Math.random() * 100)/1000;
+    let angle_v1 = 0 + (Math.floor(Math.random() * 100 )/10000)  ;
+    let mag_v2 =   1 + Math.floor(Math.random() * 100)/1000;
+    let angle_v2 =  2*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000 )  ;
+    let mag_v3 =  1 + Math.floor(Math.random() * 100)/1000;
+    let angle_v3 =  4*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000)  ;
+  
+    // current phasors
+    let mag_i1 = 1 + Math.floor(Math.random() * 100)/1000;
+    let angle_i1 = 0 + (Math.floor(Math.random() * 100 )/10000)  ;
+    let mag_i2 =   1 + Math.floor(Math.random() * 100)/1000;
+    let angle_i2 =  2*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000 )  ;
+    let mag_i3 =  1 + Math.floor(Math.random() * 100)/1000;
+    let angle_i3 =  4*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000)  ;
+  
+    // frequency value
+    let freq = 50 + Math.floor(Math.random() * 100)/1000;
+  
+    //rocof value
+    let rocof = 0 + Math.floor(Math.random() * 100)/1000;
+
+    return [mag_v1, angle_v1, mag_v2, angle_v2, mag_v3, angle_v3, mag_i1, angle_i1, mag_i2, angle_i2, mag_i3, angle_i3, freq, rocof];
+}
+
+function buffering() {
+
+  let [mag_v1, angle_v1, mag_v2, angle_v2, mag_v3, angle_v3, mag_i1, angle_i1, mag_i2, angle_i2, mag_i3, angle_i3, freq, rocof] = generate_random_values();
+
+  // push values to queue
+  mag_v1_queue.enqueue(mag_v1);
+  angle_v1_queue.enqueue(angle_v1);
+  mag_v2_queue.enqueue(mag_v2);
+  angle_v2_queue.enqueue(angle_v2);
+  mag_v3_queue.enqueue(mag_v3);
+  angle_v3_queue.enqueue(angle_v3);
+  mag_i1_queue.enqueue(mag_i1);
+  angle_i1_queue.enqueue(angle_i1);
+  mag_i2_queue.enqueue(mag_i2);
+  angle_i2_queue.enqueue(angle_i2);
+  mag_i3_queue.enqueue(mag_i3);
+  angle_i3_queue.enqueue(angle_i3);
+  freq_queue.enqueue(freq);
+  rocof_queue.enqueue(rocof);
+
+}
+
+function draw_voltages() { //function for length angle values
+
+  let length1 = mag_v1_queue.rear();
+  let angle1 = angle_v1_queue.rear();
+  let length2 = mag_v2_queue.rear();
+  let angle2 = angle_v2_queue.rear();
+  let length3 = mag_v3_queue.rear();
+  let angle3 = angle_v3_queue.rear();
 
   let canvas = document.getElementById("phasorCanvas");
   let ctx1 = canvas.getContext("2d");
@@ -130,17 +198,16 @@ function draw1() { //function for length angle values
   
   });
 
-  return  length1 ,length2 ,length3 , angle1,angle2,angle3
-
 }
  
-function draw2() { //function for length angle values
-  let length1  = 1 + Math.floor(Math.random() * 100)/1000;
-  let angle1 = 0 + (Math.floor(Math.random() * 100 )/10000)  ;
-  let length2 =   1 + Math.floor(Math.random() * 100)/1000;
-  let angle2 =  2*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000 )  ;
-  let length3 =  1 + Math.floor(Math.random() * 100)/1000;
-  let angle3 =  4*Math.PI/3 + (Math.floor(Math.random() * 100 )/10000)  ;
+function draw_currents() { //function for length angle values
+
+  let length1 = mag_i1_queue.rear();
+  let angle1 = angle_i1_queue.rear();
+  let length2 = mag_i2_queue.rear();
+  let angle2 = angle_i2_queue.rear();
+  let length3 = mag_i3_queue.rear();
+  let angle3 = angle_i3_queue.rear();
 
   let canvas = document.getElementById("phasorCanvas2");
   let ctx2 = canvas.getContext("2d");
@@ -230,19 +297,19 @@ phasorTableBody.innerHTML = "";
 let isPaused = false;
 
 function loop() {
+
+  buffering();
   if (!isPaused) {
     // code for the loop goes here
-    draw1();
-    draw2();
+    draw_voltages();
+    draw_currents();
     // repeat the loop after a delay
-    setTimeout(loop, 100);
   }else {
-    // the loop is paused  
+    // the loop is paused nothing to be done  
   }
 }
 
-// start the loop
-loop();
+const draw_phasors_loop = setTimeout(loop, phasors_diagram_refresh_rate);
 
 // pause/unpause the loop when a button is clicked
 document.getElementById("pauseButton").addEventListener("click", function() {
@@ -264,19 +331,19 @@ var myChart = new Chart(ctx5, {
     datasets: [
       {
         label: "Dataset 1",
-        data: [10, 20, 30, 40, 50, 60],
+        data: [],
         borderColor: "red",
         fill: false,
       },
       {
         label: "Dataset 2",
-        data: [20, 30, 40, 50, 60, 70],
+        data: [],
         borderColor: "blue",
         fill: false,
       },
       {
         label: "Dataset 3",
-        data: [30, 40, 50, 60, 70, 80],
+        data: [],
         borderColor: "green",
         fill: false,
       },
@@ -298,14 +365,15 @@ function startChart() {
     // Add new data point
     var time = new Date().toLocaleTimeString();
     myChart.data.labels.push(time);
+    myChart.data.datasets.data = freq_queue.get_elements();
     
     // Remove oldest data point if chart has more than 50 data points
-    if (myChart.data.labels.length > 50) {
-      myChart.data.labels.shift();
-      myChart.data.datasets[0].data.shift();
-      myChart.data.datasets[1].data.shift();
-      myChart.data.datasets[2].data.shift();
-    }
+    // if (myChart.data.labels.length > 50) {
+    //   myChart.data.labels.shift();
+    //   myChart.data.datasets[0].data.shift();
+    //   myChart.data.datasets[1].data.shift();
+    //   myChart.data.datasets[2].data.shift();
+    // }
 
     // Update chart
     myChart.update();
