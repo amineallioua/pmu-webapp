@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package estimator;
+ //Timestamp = soc + fracsec/timebase
+message Timestamp {   
+  uint32 soc=1;    // Seconds of century--count starting at midnight 01-Jan-1970
+  uint32 fracsec=2;  // Fraction of second  
+  uint32 timebase = 3; // Time quality
+  uint64 epoch = 4; //epoch in nanoseconds
+  uint64 dsp_t = 5; //dsp time in nanoseconds, debug info --dsp_t---
+
+}
+message Phasors {
+  Phasor e4=1; // First phase voltage --e4---
+  Phasor i4=2; // First phase current --i4---
+  Phasor e8 = 3; // Second phase voltage --e8---
+  Phasor i8 = 4; // Second phase current --i4---
+  Phasor e12 = 5; // Third phase voltage --e4---
+  Phasor i12 = 6; // Third phase current --i4---
+  Phasor esync = 7; // Sycro channel --esync---
+}
+
+message PhasorDerived {
+  float p=1; // Active power, measured in kWatt -- p---
+  float q=2; // Reactive power, measured in kVAR -- q---
+  Phasor e0 = 3; // Zero sequence voltage --e0---
+  Phasor e1 = 4; // Positive sequence voltage --e1---
+  Phasor e2 = 5; // Negative sequence voltage --e2---
+  Phasor i0 = 6; // Zero sequence current --i0---
+  Phasor i1 = 7; // Positive sequencecurrent --i1---
+  Phasor i2 = 8; // Negative sequence current --i2---
+  Phasor v4_8 = 9; // Phase-to-phase voltage, for e8 and e4 --v4_8---
+  Phasor v8_12 = 10; // Phase-to-phase voltage, for e12 and e8 --v8_12---
+  Phasor v12_4 = 11; // Phase-to-phase voltage, for e4 and e12 --v12_4---
+  Phasor v_res = 12; // Residual voltage --v_res--- 
+  Phasor i_res = 13; // Residual current --i_res--- 
+}
+
+message Phasor {
+  float ph=1;     // Phase, measured in rad--ph---
+  float mag=2;    // Magnitude of the phasor, measured in kV or Amp-- amp---
+  float freq = 3; // Frequency, measured in Hz -- freq ---
+  float rocof = 4; // Rate of change of frequency, measured in Hz/s -- rocof ---
+  float thd = 5;   // Total harmonic distortion, measured in dB -- thd ---
+  float sec_harm = 6; // Second harmonic, measured in dB --sec_harm---
+}
+
+message Frame { 
+  enum State{
+    NOT_FAULTY =0; // Not faulty line state --NOT_FAULTY---
+    FAULTY =1;  // Faulty line state --FAULTY---
+  }      
+  Timestamp timestamp=1;
+  Phasors phasors = 2;     
+  PhasorDerived phasorDerived = 3;
+  State rls = 4;   // Healthy line detection, binary state --rls---
+}

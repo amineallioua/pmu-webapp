@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "http": "^0.0.1-security",
+    "mysql2": "^3.10.2",
+    "nanomsg": "^4.2.1",
+    "protobufjs": "^7.2.6",
+    "socket.io": "^4.7.5"
+  }
+}
